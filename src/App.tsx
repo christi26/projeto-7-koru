@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
 
+// Contador de tarefas Christiane Gomes
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState([]); // Estado para a lista de tarefas
+  const [input, setInput] = useState(''); // Estado para o input da nova tarefa
+  
+  const addTodo = () => {
+    if (input.trim()) {
+      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
+      setInput(''); // Limpa o input após adicionar a tarefa
+    }
+  };
 
+  const toggleComplete = (id) => {
+    setTodos(todos.map(todo =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    ));
+  };
+
+  const removeTodo = (id) => {
+    setTodos(todos.filter(todo => todo.id !== id));
+  };
+
+  const pendingTasksCount = todos.filter(todo => !todo.completed).length; // Contador de tarefas pendentes
+  
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>Lista de Tarefas</h1>
+      <h6>Organize as suas tarefas de forma simples e eficiente</h6>
+
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Adicionar nova tarefa"
+      />
+      <button onClick={addTodo}>Adicionar</button>
+
+      
+
+      <h6>Todas: {pendingTasksCount}</h6> {/* Exibe o contador */}
+      
+
+      <ul>
+        {todos.map(todo => (
+          <li key={todo.id}>
+            <span
+              style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+              onClick={() => toggleComplete(todo.id)}
+            >
+              {todo.text}
+            </span>
+            <button onClick={() => removeTodo(todo.id)}>Remover</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
 export default App
