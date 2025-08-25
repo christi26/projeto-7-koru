@@ -48,10 +48,6 @@ button {
 button:hover {
   background: #5c6bc0;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
 @media (max-width: 600px) {
   h1 {
