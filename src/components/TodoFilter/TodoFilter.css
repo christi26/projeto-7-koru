@@ -1,1 +1,68 @@
-/* CSS do filtro - mobile first */
+.todo-filter {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 18px 0 20px 0;
+  background: #f4f6fb;
+  border-radius: 16px;
+  padding: 10px 0;
+}
+
+.todo-filter button {
+  background: transparent;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 18px;
+  font-size: 15px;
+  color: #444;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.todo-filter button.active {
+  background: #fff;
+  color: #3730a3;
+  box-shadow: 0 2px 8px #0001;
+}
+
+.todo-filter .badge {
+  background: #cbd5e1;
+  color: #444;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-left: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.todo-filter button.active .badge {
+  background: #3b82f6;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .todo-filter {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px 0;
+    margin: 12px 0 14px 0;
+  }
+
+  .todo-filter button {
+    font-size: 13px;
+    padding: 5px 10px;
+    gap: 4px;
+  }
+
+  .todo-filter .badge {
+    font-size: 12px;
+    padding: 1px 6px;
+  }
+}
