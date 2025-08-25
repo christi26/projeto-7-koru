@@ -1,63 +1,67 @@
-import { useState } from 'react';
-import './App.css';
+import { useState } from "react";
+import Header from "./components/Header/Header";
+import TodoInput from "./components/TodoInput/TodoInput";
+import TodoFilter from "./components/TodoFilter/TodoFilter";
+import TodoList from "./components/TodoList/TodoList";
+import "./App.css";
 
-// Contador de tarefas Christiane Gomes
+interface Todo {
+  id: number;
+  text: string;
+  completed: boolean;
+}
+
+type Filtro = "todas" | "pendentes" | "concluidas";
+
 function App() {
-  const [todos, setTodos] = useState([]); // Estado para a lista de tarefas
-  const [input, setInput] = useState(''); // Estado para o input da nova tarefa
-  
-  const addTodo = () => {
-    if (input.trim()) {
-      setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
-      setInput(''); // Limpa o input após adicionar a tarefa
-    }
-  };
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [filtro, setFiltro] = useState<Filtro>("todas");
 
-  const toggleComplete = (id) => {
-    setTodos(todos.map(todo =>
-      todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    ));
-  };
+  function handleAdd(text: string) {
+    setTodos((prev) => [...prev, { id: Date.now(), text, completed: false }]);
+  }
 
-  const removeTodo = (id) => {
-    setTodos(todos.filter(todo => todo.id !== id));
-  };
+  function toggleComplete(id: number) {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }
 
-  const pendingTasksCount = todos.filter(todo => !todo.completed).length; // Contador de tarefas pendentes
-  
+  function removeTodo(id: number) {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  }
+
+  const pendingTasksCount = todos.filter((todo) => !todo.completed).length;
+  const completedTasksCount = todos.filter((todo) => todo.completed).length;
+
+  let todosFiltrados = todos;
+  if (filtro === "pendentes")
+    todosFiltrados = todos.filter((todo) => !todo.completed);
+  if (filtro === "concluidas")
+    todosFiltrados = todos.filter((todo) => todo.completed);
+
   return (
-    <div>
-      <h1>Lista de Tarefas</h1>
-      <h6>Organize as suas tarefas de forma simples e eficiente</h6>
-
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Adicionar nova tarefa"
-      />
-      <button onClick={addTodo}>Adicionar</button>
-
-      
-
-      <h6>Todas: {pendingTasksCount}</h6> {/* Exibe o contador */}
-      
-
-      <ul>
-        {todos.map(todo => (
-          <li key={todo.id}>
-            <span
-              style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
-              onClick={() => toggleComplete(todo.id)}
-            >
-              {todo.text}
-            </span>
-            <button onClick={() => removeTodo(todo.id)}>Remover</button>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <>
+      <Header />
+      <div className="app-container">
+        <TodoInput onAdd={handleAdd} />
+        <TodoFilter
+          total={todos.length}
+          pendentes={pendingTasksCount}
+          concluidas={completedTasksCount}
+          filtro={filtro}
+          setFiltro={setFiltro}
+        />
+        <TodoList
+          todos={todosFiltrados}
+          toggleComplete={toggleComplete}
+          removeTodo={removeTodo}
+        />
+      </div>
+    </>
   );
 }
 
-export default App
+export default App;
