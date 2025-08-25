@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header/Header";
 import TodoInput from "./components/TodoInput/TodoInput";
 import TodoFilter from "./components/TodoFilter/TodoFilter";
@@ -15,11 +15,25 @@ interface Todo {
 type Filtro = "todas" | "pendentes" | "concluidas";
 
 function App() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    const saved = localStorage.getItem("todos");
+    if (saved){
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  });  //salvamento no localStorage
   const [filtro, setFiltro] = useState<Filtro>("todas");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [todoToRemove, setTodoToRemove] = useState<Todo | null>(null); // guarda tarefa inteira
 
+  // salvar no localStorage sempre que mudar 
+useEffect(() => {
+  localStorage.setItem("todos", JSON.stringify(todos));
+}, [todos]);
 
   function handleAdd(text: string) {
     setTodos((prev) => [...prev, { id: Date.now(), text, completed: false }]);
@@ -29,6 +43,15 @@ function App() {
     setTodos((prev) =>
       prev.map((todo) =>
         todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  }
+
+   // persistência localStorage
+  function updateTodo(id: number, newText: string) {
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo.id === id ? {...todo, text: newText } : todo
       )
     );
   }
@@ -71,6 +94,7 @@ function App() {
             const todo = todos.find((t) => t.id === id);
             if (todo) handleOpenRemoveModal(todo);
           }}
+          updateTodo={updateTodo}
         />
          <ModalRemocao
           isOpen={isModalOpen}
